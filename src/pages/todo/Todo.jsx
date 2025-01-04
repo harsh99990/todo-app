@@ -19,11 +19,11 @@ const Todo = () => {
 
     // check input value already exists or not
     const ifTodoContentMatched = task.some(
-      (curTask) => curTask.content === content
+      (curTask) => curTask.content.toLowerCase() === content.toLowerCase()
     );
 
     if (ifTodoContentMatched) {
-      alert("Task is already exist");
+      alert("Task already exists");
       return;
     }
 
