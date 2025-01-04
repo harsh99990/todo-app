@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./Todo.css";
 import TodoForm from "../../components/TodoForm";
 import TodoList from "../../components/TodoList";
@@ -7,6 +7,7 @@ import {
   getLocalStorageTodoData,
   setLocalStorageTodoData,
 } from "../../components/TodoLocalSto";
+import { toast, ToastContainer } from "react-toastify";
 
 const Todo = () => {
   const [task, setTask] = useState(() => getLocalStorageTodoData());
@@ -23,11 +24,20 @@ const Todo = () => {
     );
 
     if (ifTodoContentMatched) {
-      alert("Task already exists");
+      toast.error("Task already exists", {
+        position: "top-right",
+        autoClose: 1500,
+        pauseOnHover: false,
+      });
       return;
     }
 
     setTask((prev) => [...prev, { id, content, checked }]);
+    toast.success("Task added successfully", {
+      position: "top-right",
+      autoClose: 1500,
+      pauseOnHover: false,
+    });
   };
 
   // add data in to local storage
@@ -38,7 +48,11 @@ const Todo = () => {
     const updatedTask = task.filter((currEl) => currEl.content !== value);
     if (confirm("Are you sure want to delete this task?")) {
       setTask(updatedTask);
-      alert("Deleted Successfully");
+      toast.success("Task deleted successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        pauseOnHover: false,
+      });
     } else {
       return;
     }
@@ -63,7 +77,11 @@ const Todo = () => {
     } else {
       if (confirm("Are you sure want to delete all this task?")) {
         setTask([]);
-        alert("Deleted Successfully");
+        toast.success("Tasks deleted successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          pauseOnHover: false,
+        });
       } else {
         return;
       }
@@ -71,34 +89,37 @@ const Todo = () => {
   };
 
   return (
-    <section className="todo-container">
-      <header>
-        <h1>Todo List</h1>
-        {/* date component here */}
-        <TodoDate />
-      </header>
-      <TodoForm onAddTodo={handleFormSubmit} />
-      <section className="myUnOrdList">
-        <ul>
-          {task.map((curTask) => {
-            return (
-              <TodoList
-                key={curTask.id}
-                data={curTask.content}
-                checked={curTask.checked}
-                onHandleCheckedTodo={handleCheckedTodo}
-                onDeleteTodo={handleDeleteTodo}
-              />
-            );
-          })}
-        </ul>
+    <>
+      <section className="todo-container">
+        <header>
+          <h1>Todo List</h1>
+          {/* date component here */}
+          <TodoDate />
+        </header>
+        <TodoForm onAddTodo={handleFormSubmit} />
+        <section className="myUnOrdList">
+          <ul>
+            {task.map((curTask) => {
+              return (
+                <TodoList
+                  key={curTask.id}
+                  data={curTask.content}
+                  checked={curTask.checked}
+                  onHandleCheckedTodo={handleCheckedTodo}
+                  onDeleteTodo={handleDeleteTodo}
+                />
+              );
+            })}
+          </ul>
+        </section>
+        <section>
+          <button className="clear-btn" onClick={handleClearTodoData}>
+            Clear All
+          </button>
+        </section>
       </section>
-      <section>
-        <button className="clear-btn" onClick={handleClearTodoData}>
-          Clear All
-        </button>
-      </section>
-    </section>
+      <ToastContainer />
+    </>
   );
 };
 
